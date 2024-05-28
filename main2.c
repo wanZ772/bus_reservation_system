@@ -45,7 +45,7 @@ int seat_reservation()  {
     char target_seat = 'D';
     int target_id = 0;    
     printf("\nSelect seat: ");
-    scanf("%1c%1d", &target_seat, &target_id);
+    scanf(" %1c%1d", &target_seat, &target_id);
     system("cls");
     printf("\nReserving seat: %c%d", target_seat, target_id);
 
@@ -67,23 +67,23 @@ void show_customers()   {
 }
 
 
-void customer_list_update(char ic[12], char name[100], char phone[12]) {
+void customer_list_update(char ic[14], char name[100], char phone[14]) {
     // printf("%d", order_tracker);
     strcpy(customer_id[order_tracker], ic);
     strcpy(customer_name[order_tracker], name);
     strcpy(customer_phone[order_tracker], phone);
-    // printf("\nYour name is: %s\n", name);
+    printf("\nYour name is: %s\n", name);
 }
 
 void payment()  {
-    char name[100] = "", ic[12] = "", phone[12] = "";
+    char name[100] = "", ic[14] = "", phone[14] = "";
     // printf("Current tracker: %d\n", order_tracker);
     printf("\nName: ");
-    scanf("%s", &name);
+    scanf(" %s", name);
     printf("Ic Number: ");
     scanf("%s", ic);
     printf("Phone Number: ");
-    scanf("%s", phone);
+    scanf(" %s", phone);
     if (ic != "" || name != "" || phone != "")  {
         
         customer_list_update(ic, name, phone);
@@ -92,6 +92,7 @@ void payment()  {
     } else  {
         printf("Invalid payment!");
     }
+    
     show_customers();
     
 }
@@ -119,7 +120,7 @@ void main()  {
 
         int option;
         printf("\n\nOption (1 - Select Seat / 2 - Exit / 3 - Reservation Check)>> ");
-        scanf("%d", &option);
+        scanf(" %d", &option);
         if (option == 2)    {
             break;
         }   else if (option == 1)   {
@@ -127,7 +128,7 @@ void main()  {
         }   else if (option == 3)   {
             char target_id[12];
             printf("Enter IC Number: ");
-            scanf("%s", target_id);
+            scanf(" %s", target_id);
             order_check(target_id);
             continue;
         }
