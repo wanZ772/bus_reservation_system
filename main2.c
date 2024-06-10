@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 char reserved_num[30] = {};
 char reserved_alph[30] = {};
 char customer_id[30][14] = {}, customer_name[30][50] = {}, customer_phone[30][12] = {};
 float total_price = 0, base_price = 0;
+
+
+
 
 struct Destination  {
     char *location;
@@ -125,6 +129,9 @@ void customer_list_update(char ic[14], char name[100], char phone[14]) {
 void select_destination()    {
     // banner();
     int depart, desti;
+      time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+    printf("\nnow: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
     for (int i = 0; i < 9; i++) {
         if (i % 3 == 0){printf("\n");}
         printf("\n%d - %s", i+1, destination[i].location);
@@ -215,9 +222,10 @@ struct order_detail customer_detail[30];
 // customer_detail[0] = {"Najwan", 0, "010", "03"};
 
 void main()  {
+   
     
     banner();
-    
+
     while (1){
         
         int option;
