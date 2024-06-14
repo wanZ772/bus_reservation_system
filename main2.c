@@ -3,7 +3,8 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-
+#include <unistd.h>
+#include <pthread.h>
 
 
 
@@ -109,6 +110,7 @@ int seat_reservation()  {
     char target_seat = 'D';
     int target_id = 0;    
     int wanted_seat = 3;
+    total_price = 0;
     printf("\nSeat wanted (1 - %d): ", 30-order_tracker);
     scanf(" %d", &wanted_seat);
     bus_diagram();
@@ -180,7 +182,7 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
     char buffer[1024];
     FILE *database = fopen("database.json", "a");
     // fprintf(database, "\n%s", customer_detail[order_tracker].customer_ic);
-    fprintf(database, "\n%s,%c,%d,%s,%s,%c,%d,%d,%d,%s,%s",customer_detail[order_tracker].customer_ic,
+    fprintf(database, "%s,%c,%d,%s,%s,%c,%d,%d,%d,%s,%s\n",customer_detail[order_tracker].customer_ic,
     reserved_alph[order_tracker], 
     reserved_num[order_tracker],
     customer_detail[order_tracker].customer_number,
@@ -212,13 +214,33 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
     if (fav == 1)   {
         strcpy(fav_trip[favorite_trip_tracker].customer_ic, ic);
         fav_trip[favorite_trip_tracker].seat_alph = reserved_alph[customer_detail[order_tracker].customer_tracker];
-        // fav_trip[favorite_trip_tracker].seat_id = reserved_num[customer_detail[order_tracker].customer_tracker];
         fav_trip[favorite_trip_tracker].seat_id = reserved_num[customer_detail[order_tracker].customer_tracker];
         strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.customer_number, phone);
         strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.customer_name, name);
         strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_time, "1010");
+        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_date, "12-04-2024");
         fav_trip[favorite_trip_tracker].fav_customer_detail.depart = depart;
         fav_trip[favorite_trip_tracker].fav_customer_detail.destination = destination;
+
+
+        FILE *favorite_trip_database = fopen("favorite_trip_database.log", "a");
+        fprintf(favorite_trip_database, "%s,%c,%d,%s,%s,%s,%s,%d,%d\n", 
+        fav_trip[favorite_trip_tracker].customer_ic,
+        fav_trip[favorite_trip_tracker].seat_alph,
+        fav_trip[favorite_trip_tracker].seat_id,
+        fav_trip[favorite_trip_tracker].fav_customer_detail.customer_number,
+        fav_trip[favorite_trip_tracker].fav_customer_detail.customer_name,
+        fav_trip[favorite_trip_tracker].fav_customer_detail.bus_time,
+        fav_trip[favorite_trip_tracker].fav_customer_detail.bus_date,
+        fav_trip[favorite_trip_tracker].fav_customer_detail.depart,
+        fav_trip[favorite_trip_tracker].fav_customer_detail.destination
+
+
+        );
+        fclose(favorite_trip_database);
+
+
+
         favorite_trip_tracker++;
     }
     }
@@ -325,7 +347,7 @@ printf(" | |      |  _-_  |       |       |    |  .-.    |      ||==| C|\n");
 printf(" | |  __  |.'.-.' |   _   |   _   |    |.'.-.'.  |  __  | \"__=='\n");
 printf(" '---------'|( )|'----------------------'|( )|'----------\"\"     \n");
 printf("             '-'                          '-'\t");
-printf("Developed by Sinners");
+printf("Developed by Syntax Error");
    
 }
 
@@ -380,6 +402,22 @@ void test_database()    {
     fclose(database); 
 }
 
+// keep track on trip
+void trip_tracker()   {
+    printf("test");
+    int stop = 1;
+    char *location;
+    
+    while (1)   {
+        char buffer[1024];
+    FILE *current_location = fopen("location.log", "r");
+        fgets(buffer, sizeof(buffer), current_location);
+        printf("\rCurrent location: %.10s", buffer);
+        sleep(1/2);
+        // system("cls");
+        fclose(current_location);
+    }
+}
 
 // init database and load all data
 void initialize_database()  {
@@ -418,9 +456,27 @@ void initialize_database()  {
         order_tracker++;
         // printf("%s", strtok(NULL, ","));
         // printf("%s", strtok(NULL, ","));
-    }
 
-printf("%c%d -> %c", reserved_alph[0],reserved_num[0], customer_detail[0].gender);
+    }
+    fclose(database);
+    
+
+    FILE *favorite_trip_database = fopen("favorite_trip_database.log", "r");
+    while (fgets(buffer, sizeof(buffer), favorite_trip_database))   {
+        char alph[1], gender[1];
+        strcpy(fav_trip[favorite_trip_tracker].customer_ic, strtok(buffer, ","));
+        strcpy(alph, strtok(NULL, ","));
+        fav_trip[favorite_trip_tracker].seat_alph = * alph;
+        fav_trip[favorite_trip_tracker].seat_id = atoi(strtok(NULL, ","));
+        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.customer_number, strtok(NULL, ","));
+        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.customer_name, strtok(NULL, ","));
+        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_time, strtok(NULL, ","));
+        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_date, strtok(NULL, ","));
+        fav_trip[favorite_trip_tracker].fav_customer_detail.depart = atoi(strtok(NULL, ","));
+        fav_trip[favorite_trip_tracker].fav_customer_detail.destination = atoi(strtok(NULL, ","));
+        favorite_trip_tracker++;
+    }
+// printf("%c%d -> %c", reserved_alph[0],reserved_num[0], customer_detail[0].gender);
 }
 
 
@@ -434,7 +490,8 @@ void main()  {
     while (1){
         
         int option;
-        printf("\n\nOption (1 - Booking / 2 - Exit / 3 - Reservation Check / 4 - Favorite Trip) / 5 - Database test>> ");
+        
+        printf("\n\nOption (1 - Booking / 2 - Exit / 3 - Reservation Check / 4 - Favorite Trip) / 5 - Trip Tracker>> ");
         scanf(" %d", &option);
         if (option == 2)    {
             banner();
@@ -456,7 +513,8 @@ void main()  {
         }   else if (option == 4)   {
             favorite_trip();
         } else if (option == 5) {
-            test_database();
+            trip_tracker();
+            
         } else    {
             continue;
         }
