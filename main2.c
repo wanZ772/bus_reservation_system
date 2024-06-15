@@ -1,3 +1,5 @@
+#include <windows.h>
+#include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -319,6 +321,7 @@ void order_check(char target_id[12]) {
             printf("\nName: %s", customer_detail[i].customer_name);
             printf("\nPhone: %s", customer_detail[i].customer_number);
             printf("\nSeat: %c%d", reserved_alph[customer_detail[i].customer_tracker], reserved_num[customer_detail[i].customer_tracker]);
+            printf("\nTrip: %s -> %s", destination[customer_detail[i].depart].location, destination[customer_detail[i].destination].location);
         }
     }
 }
@@ -404,17 +407,41 @@ void test_database()    {
 
 // keep track on trip
 void trip_tracker()   {
-    printf("test");
-    int stop = 1;
+    int target_destination;
     char *location;
     
+    char ic[14];
+    printf("Enter your IC Number: ");
+    scanf(" %s", ic);
+    for (int i = 0; i < order_tracker + 1; i++) {
+        if (strcmp(ic, customer_detail[i].customer_ic) == 0)    {
+            target_destination = customer_detail[i].destination;
+            banner();
+            printf("\n\nYour Trip: %s -> %s\n", destination[customer_detail[i].depart].location, destination[customer_detail[i].destination].location);
+            break;
+        }   else    {
+            banner();
+            printf("IC Number not found!");
+            return;
+        }
+    }
     while (1)   {
         char buffer[1024];
     FILE *current_location = fopen("location.log", "r");
         fgets(buffer, sizeof(buffer), current_location);
         printf("\rCurrent location: %.10s", buffer);
+        if (strcmp(buffer, destination[target_destination].location) == 0)    {
+            for (int i = 0; i < 20; i++) {
+                Beep(1000,500);
+            }
+            // sleep(10);
+            // sound(100);
+            fclose(current_location);
+            break;
+        }
+        
         sleep(1/2);
-        // system("cls");
+        
         fclose(current_location);
     }
 }
