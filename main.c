@@ -108,7 +108,7 @@ int seat_reservation()  {
     for (int i = 0; i < wanted_seat; i++)    {
         printf("\nSelect seat (%d / %d): ", i+1, wanted_seat);
         scanf(" %1c%2d", &target_seat, &target_id);    
-
+        target_seat = toupper(target_seat);
         if (reserved_checker(target_seat, target_id) == -1)  {
             reserved_alph[order_tracker + i] = target_seat;
             reserved_num[order_tracker + i] = target_id;
@@ -121,7 +121,7 @@ int seat_reservation()  {
         }
     }
     system("cls");
-    printf("\nReserving seat:");
+    printf("\nReserving seat: %c%d", target_seat, target_id);
         
         return wanted_seat;
  
@@ -443,6 +443,8 @@ void trip_tracker()   {
 void initialize_database()  {
     printf("\nloading database . . . .");
     char buffer[1024];
+
+    
     FILE *database = fopen("database/booking.log", "r");
     while (fgets(buffer, sizeof buffer, database)) {
 
@@ -498,7 +500,7 @@ void initialize_database()  {
         fav_trip[favorite_trip_tracker].fav_customer_detail.destination = atoi(strtok(NULL, ","));
         strcpy(gender, strtok(NULL, ","));
         fav_trip[favorite_trip_tracker].fav_customer_detail.gender = *gender;
-        printf("%c", fav_trip[favorite_trip_tracker].fav_customer_detail.gender);
+        // printf("%c", fav_trip[favorite_trip_tracker].fav_customer_detail.gender);
         favorite_trip_tracker++;
     }
     printf("ok");
