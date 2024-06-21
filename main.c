@@ -249,7 +249,7 @@ int* select_destination()    {
     route[0] = depart-1;
     route[1] = desti-1;
     system("cls");
-    // base_price = 12;
+    // base_price = 12 ;
     if (depart < desti)
         for (int i = route[0]; i < route[1]; i++)
             base_price += ((3.33 * destination[i].distance) + (3.33 * destination[i+1].distance)) / 30;
