@@ -44,9 +44,9 @@ struct Favorite {
 
 
 struct Destination destination[9] = {
-    {"JOHOR", 90},
-    {"SELANGOR", 171},
-    {"KEDAH", 353},
+    {"JOHOR", 200},
+    {"SELANGOR", 120},
+    {"KEDAH", 90},
     };
 struct Details customer_detail[30];
 // struct Favorite fav_trip[30] = {{"030520100839", 'A',1,0, "1010"}};
@@ -250,7 +250,16 @@ int* select_destination()    {
     route[1] = desti-1;
     system("cls");
     // base_price = 12;
-    base_price = ((3.33 * destination[route[0]].distance) + (3.33 * destination[route[1]].distance)) / 30;
+    if (depart < desti)
+        for (int i = route[0]; i < route[1]; i++)
+            base_price += ((3.33 * destination[i].distance) + (3.33 * destination[i+1].distance)) / 30;
+    else if (depart > desti)
+        for (int i = route[0]; i > route[1]; i--)
+            // printf("%s", destination[i].location);
+            base_price += ((3.33 * destination[i].distance) + (3.33 * destination[i-1].distance)) / 30;
+    else
+        base_price = ((3.33 * destination[route[0]].distance)) / 30;
+    base_price += 10;
     // base_price = 3.33 * 2 * destination[desti-1].distance / 30;
     printf("\n%s -> %s", destination[route[0]].location, destination[route[1]].location);
     printf("\nPrice per ticket: RM%.0f\n", base_price);
@@ -441,7 +450,7 @@ void trip_tracker()   {
 
 // init database and load all data
 void initialize_database()  {
-    printf("\nloading database . . . .");
+    printf("\nloading local database . . . .");
     char buffer[1024];
 
     
@@ -503,7 +512,7 @@ void initialize_database()  {
         // printf("%c", fav_trip[favorite_trip_tracker].fav_customer_detail.gender);
         favorite_trip_tracker++;
     }
-    printf("ok");
+    printf("ok\n");
 }
 
 
