@@ -232,6 +232,7 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
 
 
 void select_date()  {
+    strcpy(trip_date, "");
     int day, month, year;
       time_t t = time(NULL);
     struct tm tm = *localtime(&t);
