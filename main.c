@@ -231,7 +231,7 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
 }
 
 
-void select_date()  {
+int select_date()  {
     strcpy(trip_date, "");
     int day, month, year;
       time_t t = time(NULL);
@@ -240,8 +240,8 @@ void select_date()  {
     scanf("%02d-%02d-%4d", &day, &month, &year);
     // printf("%d", c);
     if (!((year >= tm.tm_year + 1900) && (month >= tm.tm_mon + 1) && (day >= tm.tm_mday)))  {
-        printf("invalid\n");
-        // return 1;
+        printf("invalid date!\n");
+        return -1;
     }   
         char new_day[2], new_month[2], new_year[4];
         itoa(day,new_day,10);
@@ -262,6 +262,7 @@ void select_date()  {
     // printf("%s", strtok(date, "-"));
     printf("Checking your date . . .");
     printf("%s", trip_date);
+    return 1;
 }
 
 int* select_destination()    {
@@ -273,7 +274,13 @@ int* select_destination()    {
   struct tm tm = *localtime(&t);
     printf("\nnow: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
     
-    select_date();
+    int date_state = select_date();
+    if (date_state == -1)   {
+        int* route = (int*)malloc(5 * sizeof(int));
+        route[0] = -1;
+        route[1] = -1;
+        return route;
+    }
     // printf("%c", date[0]);
     for (int i = 0; i < 3; i++) {
         if (i % 3 == 0){printf("\n");}
@@ -579,10 +586,13 @@ void main()  {
             banner();
             
             int* trip = select_destination();
-
-            int seats = seat_reservation();
+            if (trip[0] != -1 || trip[1] != -1) {
+                int seats = seat_reservation();
+                payment(seats, trip[0], trip[1]);
+            }
+                
             
-            payment(seats, trip[0], trip[1]);
+            
         }   else if (option == 3)   {
             char target_id[12];
             printf("Enter IC Number: ");
