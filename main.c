@@ -13,7 +13,7 @@ char reserved_num[30] = {};
 char reserved_alph[30] = {};
 char customer_id[30][14] = {}, customer_name[30][50] = {}, customer_phone[30][12] = {};
 float total_price = 0, base_price = 0;
-
+char trip_date[11];
 
 
 
@@ -143,7 +143,7 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
     strcpy(customer_detail[order_tracker].customer_name, name);
     customer_detail[order_tracker].customer_tracker = order_tracker;
     strcpy(customer_detail[order_tracker].customer_number, phone);
-    strcpy(customer_detail[order_tracker].bus_date, "12-04-2024");
+    strcpy(customer_detail[order_tracker].bus_date, trip_date);
     strcpy(customer_detail[order_tracker].bus_time, "1010");
     customer_detail[order_tracker].depart = depart;
     customer_detail[order_tracker].destination = destination;
@@ -230,17 +230,56 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
     order_tracker++;
 }
 
+
+void select_date()  {
+    int day, month, year;
+      time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    printf("\nEnter Your Date (DD-MM-YYYY): ");
+    scanf("%02d-%02d-%4d", &day, &month, &year);
+    // printf("%d", c);
+    if (!((year >= tm.tm_year + 1900) && (month >= tm.tm_mon + 1) && (day >= tm.tm_mday)))  {
+        printf("invalid\n");
+        // return 1;
+    }   
+        char new_day[2], new_month[2], new_year[4];
+        itoa(day,new_day,10);
+        itoa(month,new_month,10);
+        char new_new_month[2];
+        strcpy(new_new_month, new_month);
+        itoa(year,new_year,10);
+
+        // printf("date: %s", new_day);
+        strcat(trip_date, new_day);
+        strcat(trip_date, "-");
+        strcat(trip_date, new_new_month);
+        strcat(trip_date, "-");
+        strcat(trip_date, new_year);
+    
+    
+    // strtok(date, "-");
+    // printf("%s", strtok(date, "-"));
+    printf("Checking your date . . .");
+    printf("%s", trip_date);
+}
+
 int* select_destination()    {
     // banner();
+    
     int depart, desti;
     
       time_t t = time(NULL);
   struct tm tm = *localtime(&t);
     printf("\nnow: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    
+    select_date();
+    // printf("%c", date[0]);
     for (int i = 0; i < 3; i++) {
         if (i % 3 == 0){printf("\n");}
         printf("\n%d - %s", i+1, destination[i].location);
     }
+    
+    // if (atoi()) // balik sini
     printf("\nDeparture -> ");
     scanf("%d", &depart);
     printf("Destination -> ");
@@ -361,6 +400,7 @@ void favorite_trip()    {
     }
     printf("\n\nTrip >> ");
     scanf("%d", &trip_id);
+    select_date();
     trip_id--;
     int reserved_check = reserved_checker(fav_trip[trip_id].seat_alph, fav_trip[trip_id].seat_id);
     if (reserved_check == -1)   {
@@ -432,9 +472,10 @@ void trip_tracker()   {
         fgets(buffer, sizeof(buffer), current_location);
         printf("\rCurrent location: %15s", buffer);
         if (strcmp(buffer, destination[target_destination].location) == 0)    {
-            for (int i = 0; i < 20; i++) {
-                Beep(7000,500);
-            }
+            // for (int i = 0; i < 20; i++) {
+                Beep(7000,2500);
+                sleep(3);
+            // }
             // sleep(10);
             // sound(100);
             fclose(current_location);
@@ -442,7 +483,7 @@ void trip_tracker()   {
             break;
         }
         
-        sleep(1/2);
+        // sleep(1/2);
         
         fclose(current_location);
     }
