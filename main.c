@@ -199,7 +199,7 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
         strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.customer_number, phone);
         strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.customer_name, name);
         strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_time, "1010");
-        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_date, "12-04-2024");
+        strcpy(fav_trip[favorite_trip_tracker].fav_customer_detail.bus_date, trip_date);
         fav_trip[favorite_trip_tracker].fav_customer_detail.depart = depart;
         fav_trip[favorite_trip_tracker].fav_customer_detail.destination = destination;
         fav_trip[favorite_trip_tracker].fav_customer_detail.gender = customer_detail[order_tracker].gender;
