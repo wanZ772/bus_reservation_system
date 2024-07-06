@@ -1,3 +1,10 @@
+/*
+Prorgram: Bus Reservation System
+Developed by: Muhammad Najwan bin Hassan
+Matric Number: 2023680886
+*/
+
+// include all header file
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +15,7 @@
 
 
 
-
+// declare all variables and array needed
 char reserved_num[30] = {};
 char reserved_alph[30] = {};
 char customer_id[30][14] = {}, customer_name[30][50] = {}, customer_phone[30][12] = {};
@@ -16,13 +23,13 @@ float total_price = 0, base_price = 0;
 char trip_date[11];
 
 
-
+// declaring structure name Destination
 struct Destination  {
-    char *location;
+    char *location; // pointer
     float distance;
 };
 
-
+// declaring structure name Details
 struct Details {
     char customer_name[400];
     int customer_tracker;
@@ -34,6 +41,8 @@ struct Details {
     int depart;
     int destination;
 };
+
+// declaring structure name favorite
 struct Favorite {
     char customer_ic[14];
     char seat_alph;
@@ -42,33 +51,37 @@ struct Favorite {
 };
 
 
-
+// declare and assign array destination in structure Destination
 struct Destination destination[9] = {
     {"JOHOR", 200},
     {"SELANGOR", 120},
     {"KEDAH", 90},
     };
-struct Details customer_detail[30];
-// struct Favorite fav_trip[30] = {{"030520100839", 'A',1,0, "1010"}};
-struct Favorite fav_trip[30];
-// int favorite_trip_size =  sizeof fav_trip / sizeof fav_trip[0];
-// struct order_detail customer_detail[30];
 
 
+struct Details customer_detail[30]; // declare array customer_detail to structure Detail
+struct Favorite fav_trip[30]; // declare array fav_trip to structure Favorite
+
+
+// declare and assign order_tracker, favorite_trip_tracker, customer_tracker variable
 int order_tracker = 0, favorite_trip_tracker = 0;
 int customer_tracker = 1;
 
+
+// function to check seat has been reserved or not
 int reserved_checker(char target_alph, int target_id)   {
  
     for (int i = 0; i < order_tracker + 1; i++)    {
         if (target_alph == reserved_alph[i] && target_id == reserved_num[i])    {
-            return customer_detail[i].customer_tracker;
+            return customer_detail[i].customer_tracker; // will return customer_tracker if seat has been reserved
         }
         
     }
-    return -1;
+    return -1; // will return -1 if seat is not reserved
 }
 
+
+// function to seat diagram in the bus
 void bus_diagram()  {
     char seat_alph[3] = {'A', 'B', 'C'};
     printf("\nBus Seats Diagram (A - Single seat / BC - Couple Seat / X - Unavailable / (M) - Male / (F) - Female): \n\n");
@@ -96,7 +109,7 @@ void bus_diagram()  {
 }
 
 
-
+// function to reserve the seat
 int seat_reservation()  {
     char target_seat = 'D';
     int target_id = 0;    
@@ -134,7 +147,7 @@ void show_customers()   {
     }
 }
 
-
+// function to update customer that has been registered to the database
 void customer_list_update(char ic[14], char name[100], char phone[14], int gender, int depart, int destination, int fav_booking) {
     strcpy(customer_id[order_tracker], ic);
 
@@ -230,12 +243,12 @@ void customer_list_update(char ic[14], char name[100], char phone[14], int gende
     order_tracker++;
 }
 
-
+// function to select date
 int select_date()  {
     strcpy(trip_date, "");
     int day, month, year;
       time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
+    struct tm tm = *localtime(&t); // pointer
     printf("\nEnter Your Date (DD-MM-YYYY): ");
     scanf("%02d-%02d-%4d", &day, &month, &year);
     // printf("%d", c);
@@ -265,6 +278,8 @@ int select_date()  {
     return 1;
 }
 
+
+// function that determine departure and destination location (function in pointer)
 int* select_destination()    {
     // banner();
     
@@ -314,6 +329,8 @@ int* select_destination()    {
     return route;
 }
 
+
+// function that handle customer's payment details
 void payment(int seats, int depart, int destination)  {
     
     char name[100] = "", ic[14] = "", phone[14] = "";
@@ -349,7 +366,7 @@ void payment(int seats, int depart, int destination)  {
 
 
 
-
+// function that check customer's booking
 void order_check(char target_id[12]) {
     
     printf("\nDetails for customer: %s\n", target_id);
@@ -366,6 +383,8 @@ void order_check(char target_id[12]) {
     }
 }
 
+
+// function that show ascii art
 void banner()   {
     
 
@@ -503,7 +522,7 @@ void initialize_database()  {
     char buffer[1024];
 
     
-    FILE *database = fopen("database/booking.log", "r");
+    FILE *database = fopen("database/booking.log", "r"); // pointer
     while (fgets(buffer, sizeof buffer, database)) {
 
 
@@ -543,7 +562,7 @@ void initialize_database()  {
     fclose(database);
     
 
-    FILE *favorite_trip_database = fopen("database/favorite_trip_database.log", "r");
+    FILE *favorite_trip_database = fopen("database/favorite_trip_database.log", "r"); // pointer
     while (fgets(buffer, sizeof(buffer), favorite_trip_database))   {
         char alph[1], gender[1];
         strcpy(fav_trip[favorite_trip_tracker].customer_ic, strtok(buffer, ","));
